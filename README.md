@@ -21,10 +21,10 @@ Before running this project, make sure you have the following installed:
 Create a `.env` file in the root directory with the following variables:
 
 ```
-PORT=8080
-NEO4J_URI=bolt://localhost:7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=your_password
+PORT=
+NEO4J_URI=
+NEO4J_USER=
+NEO4J_PASSWORD=
 ```
 
 ## 🛠️ Running the project locally
