@@ -61,7 +61,7 @@ Open your browser and navigate to `http://localhost:port/docs/index.html` to int
 - `GET /api/combinations?element={elementName}` - Get combinations for specific element
 - `GET /api/combinations/result?resultingElement={elementName}` - Get combinations that result in specific element
 
-For detailed information about the API, including endpoints, request/response formats, and error codes, please refer to the Swagger UI.
+For detailed information about the API, including endpoints, request/response formats, and error codes, please refer to the Swagger UI `/docs/index.html`.
 
 ## 🤝 Contributing
 
