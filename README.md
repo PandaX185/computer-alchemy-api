@@ -45,7 +45,7 @@ go run main.go
 ```
 
 4. Access the Swagger UI
-Open your browser and navigate to `http://localhost:8080/docs/index.html` to interact with the API.
+Open your browser and navigate to `http://localhost:port/docs/index.html` to interact with the API.
 
 ## 📚 API Documentation
 
