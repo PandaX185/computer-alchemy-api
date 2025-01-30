@@ -2,3 +2,4 @@
 neo4j_db/
 *.http
 tmp/
+[dD]ocker*
