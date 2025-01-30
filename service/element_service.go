@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
@@ -47,7 +48,7 @@ func GetAllElements() []models.Element {
 	return result
 }
 
-func GetElementByName(name string) models.Element {
+func GetElementByName(name string) (*models.Element, error) {
 	driver := config.ConnectToDB()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
@@ -63,27 +64,29 @@ func GetElementByName(name string) models.Element {
 		RETURN e.name, e.image, e.description
 	`
 
-	var result models.Element
+	var result *models.Element
 	_, err := session.ExecuteRead(ctx, func(tx neo4j.ManagedTransaction) (any, error) {
 		records, err := tx.Run(ctx, query, map[string]any{"name": name})
 		if err != nil {
 			return nil, err
 		}
 		for records.Next(ctx) {
-			result.Name = records.Record().Values[0].(string)
-			result.Image = records.Record().Values[1].(string)
-			result.Description = records.Record().Values[2].(string)
+			result = &models.Element{
+				Name:        records.Record().Values[0].(string),
+				Image:       records.Record().Values[1].(string),
+				Description: records.Record().Values[2].(string),
+			}
 		}
-		return result, nil
+		return nil, nil
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	return result
+	return result, nil
 }
 
-func CombineElements(firstElement, secondElement string) []models.Element {
+func CombineElements(firstElement, secondElement string) ([]*models.Element, error) {
 	driver := config.ConnectToDB()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
@@ -100,7 +103,7 @@ func CombineElements(firstElement, secondElement string) []models.Element {
 		RETURN result.name, result.image, result.description
 	`
 
-	var result []models.Element
+	result := []*models.Element{}
 	_, err := session.ExecuteRead(ctx, func(tx neo4j.ManagedTransaction) (any, error) {
 		records, err := tx.Run(ctx, query, map[string]any{
 			"firstElement":  firstElement,
@@ -110,19 +113,24 @@ func CombineElements(firstElement, secondElement string) []models.Element {
 			return nil, err
 		}
 		for records.Next(ctx) {
-			var element models.Element
-			element.Name = records.Record().Values[0].(string)
-			element.Image = records.Record().Values[1].(string)
-			element.Description = records.Record().Values[2].(string)
+			element := &models.Element{
+				Name:        records.Record().Values[0].(string),
+				Image:       records.Record().Values[1].(string),
+				Description: records.Record().Values[2].(string),
+			}
 			result = append(result, element)
 		}
-		
+
 		log.Printf("Combining %s and %s = %v", firstElement, secondElement, result)
-		return result, nil
+		return nil, nil
 	})
 
-	if err != nil {
-		log.Fatal(err)
+	if len(result) == 0 {
+		err = errors.New("invalid combination")
 	}
-	return result
+
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }

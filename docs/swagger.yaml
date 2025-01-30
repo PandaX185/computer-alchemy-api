@@ -23,21 +23,7 @@ info:
   title: Computer Alchemy API
   version: "1.0"
 paths:
-  /elements:
-    get:
-      description: Returns a list of all elements in the game
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Element'
-            type: array
-      summary: Get all available elements
-      tags:
-      - elements
+  /combinations:
     post:
       consumes:
       - application/json
@@ -63,6 +49,21 @@ paths:
           schema:
             type: string
       summary: Combine elements
+      tags:
+      - combinations
+  /elements:
+    get:
+      description: Returns a list of all elements in the game
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Element'
+            type: array
+      summary: Get all available elements
       tags:
       - elements
   /elements/{name}:

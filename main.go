@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"os"
 
+	_ "github.com/PandaX185/computer-alchemy-api/docs" // Add this line for swagger docs
+
 	"github.com/PandaX185/computer-alchemy-api/controller"
-	_ "github.com/PandaX185/computer-alchemy-api/docs"
 	"github.com/PandaX185/computer-alchemy-api/seed"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -45,18 +46,21 @@ func main() {
 	router := mux.NewRouter()
 
 	// Swagger documentation endpoint
-	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
-		httpSwagger.URL("/swagger/doc.json"),
+	router.PathPrefix("/docs/").Handler(httpSwagger.Handler(
+		httpSwagger.URL("/docs/doc.json"),
 		httpSwagger.DeepLinking(true),
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),
 	))
 
-	router.HandleFunc("/api/elements", controller.GetAllElements).Methods("GET")
+	// Group element-related routes
+	elementRouter := router.PathPrefix("/api/elements").Subrouter()
+	elementRouter.HandleFunc("", controller.GetAllElements).Methods("GET")
+	elementRouter.HandleFunc("/{name}", controller.GetElementByName).Methods("GET")
 
-	router.HandleFunc("/api/elements/{name}", controller.GetElementByName).Methods("GET")
-
-	router.HandleFunc("/api/elements", controller.CombineElements).Methods("POST")
+	// Group combination-related routes
+	combinationRouter := router.PathPrefix("/api/combinations").Subrouter()
+	combinationRouter.HandleFunc("", controller.CombineElements).Methods("POST")
 
 	server.Handler = router
 

@@ -15,28 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/elements": {
-            "get": {
-                "description": "Returns a list of all elements in the game",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "elements"
-                ],
-                "summary": "Get all available elements",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Element"
-                            }
-                        }
-                    }
-                }
-            },
+        "/combinations": {
             "post": {
                 "description": "Combines two elements and returns the resulting element",
                 "consumes": [
@@ -46,7 +25,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "elements"
+                    "combinations"
                 ],
                 "summary": "Combine elements",
                 "parameters": [
@@ -74,6 +53,29 @@ const docTemplate = `{
                         "description": "Invalid combination",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/elements": {
+            "get": {
+                "description": "Returns a list of all elements in the game",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "elements"
+                ],
+                "summary": "Get all available elements",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Element"
+                            }
                         }
                     }
                 }
