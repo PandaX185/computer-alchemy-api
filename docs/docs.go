@@ -16,6 +16,35 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/combinations": {
+            "get": {
+                "description": "Returns a list of all combinations",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "combinations"
+                ],
+                "summary": "Get all combinations",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Element name",
+                        "name": "element",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.CombinationResponse"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Combines two elements and returns the resulting element",
                 "consumes": [
@@ -53,6 +82,38 @@ const docTemplate = `{
                         "description": "Invalid combination",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/combinations/result": {
+            "get": {
+                "description": "Returns a list of all combinations for a resulting element",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "combinations"
+                ],
+                "summary": "Get all combinations for a resulting element",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Resulting element name",
+                        "name": "resultingElement",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.CombinationResponse"
+                            }
                         }
                     }
                 }
@@ -126,6 +187,20 @@ const docTemplate = `{
                 },
                 "second_element": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.CombinationResponse": {
+            "type": "object",
+            "properties": {
+                "firstElement": {
+                    "$ref": "#/definitions/models.Element"
+                },
+                "resultingElement": {
+                    "$ref": "#/definitions/models.Element"
+                },
+                "secondElement": {
+                    "$ref": "#/definitions/models.Element"
                 }
             }
         },

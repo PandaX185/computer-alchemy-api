@@ -7,6 +7,15 @@ definitions:
       second_element:
         type: string
     type: object
+  dto.CombinationResponse:
+    properties:
+      firstElement:
+        $ref: '#/definitions/models.Element'
+      resultingElement:
+        $ref: '#/definitions/models.Element'
+      secondElement:
+        $ref: '#/definitions/models.Element'
+    type: object
   models.Element:
     properties:
       description:
@@ -24,6 +33,25 @@ info:
   version: "1.0"
 paths:
   /combinations:
+    get:
+      description: Returns a list of all combinations
+      parameters:
+      - description: Element name
+        in: query
+        name: element
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.CombinationResponse'
+            type: array
+      summary: Get all combinations
+      tags:
+      - combinations
     post:
       consumes:
       - application/json
@@ -49,6 +77,27 @@ paths:
           schema:
             type: string
       summary: Combine elements
+      tags:
+      - combinations
+  /combinations/result:
+    get:
+      description: Returns a list of all combinations for a resulting element
+      parameters:
+      - description: Resulting element name
+        in: query
+        name: resultingElement
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.CombinationResponse'
+            type: array
+      summary: Get all combinations for a resulting element
       tags:
       - combinations
   /elements:

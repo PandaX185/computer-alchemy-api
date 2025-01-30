@@ -40,3 +40,40 @@ func CombineElements(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(result)
 }
+
+// GetAllCombinations godoc
+// @Summary Get all combinations
+// @Description Returns a list of all combinations
+// @Tags combinations
+// @Produce json
+// @Success 200 {array} dto.CombinationResponse
+// @Param element query string false "Element name"
+// @Router /combinations [get]
+func GetAllCombinations(w http.ResponseWriter, r *http.Request) {
+	element := r.URL.Query().Get("element")
+	var combinations []*dto.CombinationResponse
+	if element == "" {
+		combinations = service.GetAllCombinations()
+	} else {
+		combinations = service.GetAllElementCombinations(element)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(combinations)
+}
+
+// GetAllResultCombinations godoc
+// @Summary Get all combinations for a resulting element
+// @Description Returns a list of all combinations for a resulting element
+// @Tags combinations
+// @Produce json
+// @Param resultingElement query string true "Resulting element name"
+// @Success 200 {array} dto.CombinationResponse
+// @Router /combinations/result [get]
+func GetAllResultCombinations(w http.ResponseWriter, r *http.Request) {
+	resultingElement := r.URL.Query().Get("resultingElement")
+	combinations := service.GetAllResultCombinations(resultingElement)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(combinations)
+}

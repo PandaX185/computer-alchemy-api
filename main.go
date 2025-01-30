@@ -60,8 +60,9 @@ func main() {
 
 	// Group combination-related routes
 	combinationRouter := router.PathPrefix("/api/combinations").Subrouter()
+	combinationRouter.HandleFunc("", controller.GetAllCombinations).Methods("GET")
 	combinationRouter.HandleFunc("", controller.CombineElements).Methods("POST")
-
+	combinationRouter.HandleFunc("/result", controller.GetAllResultCombinations).Methods("GET")
 	server.Handler = router
 
 	if err := server.ListenAndServe(); err != nil {

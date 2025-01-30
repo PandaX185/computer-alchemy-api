@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"log"
 	"time"
 
@@ -79,55 +78,6 @@ func GetElementByName(name string) (*models.Element, error) {
 		}
 		return nil, nil
 	})
-
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func CombineElements(firstElement, secondElement string) ([]*models.Element, error) {
-	driver := config.ConnectToDB()
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-	defer driver.Close(ctx)
-
-	session := driver.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
-	defer session.Close(ctx)
-
-	query := `
-		MATCH (e1:Element {name: $firstElement})-[r:CREATES]->(result:Element)
-		MATCH (e2:Element {name: $secondElement})-[r:CREATES]->(result:Element)
-		WHERE r.with = $secondElement
-		RETURN result.name, result.image, result.description
-	`
-
-	result := []*models.Element{}
-	_, err := session.ExecuteRead(ctx, func(tx neo4j.ManagedTransaction) (any, error) {
-		records, err := tx.Run(ctx, query, map[string]any{
-			"firstElement":  firstElement,
-			"secondElement": secondElement,
-		})
-		if err != nil {
-			return nil, err
-		}
-		for records.Next(ctx) {
-			element := &models.Element{
-				Name:        records.Record().Values[0].(string),
-				Image:       records.Record().Values[1].(string),
-				Description: records.Record().Values[2].(string),
-			}
-			result = append(result, element)
-		}
-
-		log.Printf("Combining %s and %s = %v", firstElement, secondElement, result)
-		return nil, nil
-	})
-
-	if len(result) == 0 {
-		err = errors.New("invalid combination")
-	}
 
 	if err != nil {
 		return nil, err
