@@ -83,7 +83,7 @@ func GetElementByName(name string) models.Element {
 	return result
 }
 
-func GetCombinationResult(firstElement, secondElement string) []models.Element {
+func CombineElements(firstElement, secondElement string) []models.Element {
 	driver := config.ConnectToDB()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
@@ -116,6 +116,8 @@ func GetCombinationResult(firstElement, secondElement string) []models.Element {
 			element.Description = records.Record().Values[2].(string)
 			result = append(result, element)
 		}
+		
+		log.Printf("Combining %s and %s = %v", firstElement, secondElement, result)
 		return result, nil
 	})
 

@@ -1,6 +1,6 @@
 package models
 
-type Relation struct {
+type Combination struct {
 	FirstElement     string
 	SecondElement    string
 	ResultingElement string

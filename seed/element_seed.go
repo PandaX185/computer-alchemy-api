@@ -22,6 +22,36 @@ func SeedElements() error {
 	defer session.Close(ctx)
 
 	query := `
+		MATCH ()-[r]-()
+		DELETE r
+	`
+	_, err := session.ExecuteWrite(ctx, func(tx neo4j.ManagedTransaction) (any, error) {
+		_, err := tx.Run(ctx, query, nil)
+		if err != nil {
+			return nil, fmt.Errorf("failed to delete relationships: %w", err)
+		}
+		return nil, nil
+	})
+	if err != nil {
+		return fmt.Errorf("failed to delete relationships: %w", err)
+	}
+
+	query = `
+		MATCH (e:Element)
+		DELETE e
+	`
+	_, err = session.ExecuteWrite(ctx, func(tx neo4j.ManagedTransaction) (any, error) {
+		_, err := tx.Run(ctx, query, nil)
+		if err != nil {
+			return nil, fmt.Errorf("failed to delete nodes: %w", err)
+		}
+		return nil, nil
+	})
+	if err != nil {
+		return fmt.Errorf("failed to delete nodes: %w", err)
+	}
+
+	query = `
 		MERGE (e:Element {name: $name})
 		SET e.image = $image,
 			e.description = $description
@@ -49,9 +79,9 @@ func SeedElements() error {
 }
 
 var elements = []models.Element{
+	{Name: "Bit", Image: "bit.png", Description: "A bit is the smallest unit of digital information, representing either 0 or 1."},
 	{Name: "Byte", Image: "byte.png", Description: "A byte is a unit of digital information consisting of 8 bits, capable of representing 256 different values."},
 	{Name: "Logic Gate", Image: "logic-gate.png", Description: "Logic gates are fundamental electronic components that perform basic boolean operations (AND, OR, NOT, etc.) on binary inputs."},
-	{Name: "Register", Image: "register.png", Description: "A register is a quickly accessible storage location within a processor that temporarily holds data for processing."},
 	{Name: "Flip Flop", Image: "flip-flop.png", Description: "A flip flop is a digital circuit that can store one bit of information and maintain its state until actively changed."},
 	{Name: "Transistor", Image: "transistor.png", Description: "A transistor is a semiconductor device used to amplify or switch electronic signals, forming the basic building block of modern electronics."},
 	{Name: "Data", Image: "data.png", Description: "Data is any information processed or stored by a computer, including numbers, text, images, and other forms of information."},
@@ -65,15 +95,6 @@ var elements = []models.Element{
 	{Name: "Operating System", Image: "operating-system.png", Description: "An operating system is core software that manages hardware resources and provides services for computer programs."},
 	{Name: "Memory", Image: "memory.png", Description: "Memory is hardware that stores data and instructions for immediate or long-term use by a computer system."},
 	{Name: "CPU", Image: "cpu.png", Description: "A CPU (Central Processing Unit) is the primary processor that performs most calculations and controls other computer components."},
-	{Name: "RAM", Image: "ram.png", Description: "RAM (Random Access Memory) is volatile memory that provides fast, temporary storage for data being actively used by the computer."},
+	{Name: "File", Image: "file.png", Description: "A file is a collection of data stored on a computer's hard drive or other storage media, organized in a specific format."},
 	{Name: "Storage", Image: "storage.png", Description: "Storage refers to non-volatile devices and media that retain data even when power is removed, like hard drives and SSDs."},
-	{Name: "Database", Image: "database.png", Description: "A database is an organized collection of structured information or data, typically stored and accessed electronically."},
-	{Name: "API", Image: "api.png", Description: "An API (Application Programming Interface) defines rules and protocols for how different software applications can communicate and interact."},
-	{Name: "Web", Image: "web.png", Description: "The Web (World Wide Web) is a system of interlinked hypertext documents and resources accessed via the Internet."},
-	{Name: "Server", Image: "server.png", Description: "A server is a computer or system that provides resources, data, services, or programs to other computers over a network."},
-	{Name: "Cloud", Image: "cloud.png", Description: "Cloud computing provides on-demand computing resources (storage, processing, services) over the Internet."},
-	{Name: "AI", Image: "ai.png", Description: "AI (Artificial Intelligence) is computer systems' ability to perform tasks that typically require human intelligence."},
-	{Name: "Machine Learning", Image: "machine-learning.png", Description: "Machine Learning is a subset of AI that enables systems to learn and improve from experience without explicit programming."},
-	{Name: "Deep Learning", Image: "deep-learning.png", Description: "Deep Learning is a type of machine learning using neural networks with multiple layers to analyze various factors of data."},
-	{Name: "Neural Network", Image: "neural-network.png", Description: "A Neural Network is a computing system inspired by biological neural networks, designed to recognize patterns in data."},
 }

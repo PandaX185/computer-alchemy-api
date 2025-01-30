@@ -1,0 +1,91 @@
+basePath: /api
+definitions:
+  dto.CombinationRequest:
+    properties:
+      first_element:
+        type: string
+      second_element:
+        type: string
+    type: object
+  models.Element:
+    properties:
+      description:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is the API server for the Computer Alchemy game.
+  title: Computer Alchemy API
+  version: "1.0"
+paths:
+  /elements:
+    get:
+      description: Returns a list of all elements in the game
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Element'
+            type: array
+      summary: Get all available elements
+      tags:
+      - elements
+    post:
+      consumes:
+      - application/json
+      description: Combines two elements and returns the resulting element
+      parameters:
+      - description: Elements to combine
+        in: body
+        name: combination
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CombinationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Element'
+            type: array
+        "400":
+          description: Invalid combination
+          schema:
+            type: string
+      summary: Combine elements
+      tags:
+      - elements
+  /elements/{name}:
+    get:
+      description: Returns a specific element by its name
+      parameters:
+      - description: Element name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Element'
+        "404":
+          description: Element not found
+          schema:
+            type: string
+      summary: Get element by name
+      tags:
+      - elements
+swagger: "2.0"

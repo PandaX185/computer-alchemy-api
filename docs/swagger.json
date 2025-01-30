@@ -1,0 +1,139 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the API server for the Computer Alchemy game.",
+        "title": "Computer Alchemy API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/elements": {
+            "get": {
+                "description": "Returns a list of all elements in the game",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "elements"
+                ],
+                "summary": "Get all available elements",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Element"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Combines two elements and returns the resulting element",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "elements"
+                ],
+                "summary": "Combine elements",
+                "parameters": [
+                    {
+                        "description": "Elements to combine",
+                        "name": "combination",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CombinationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Element"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid combination",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/elements/{name}": {
+            "get": {
+                "description": "Returns a specific element by its name",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "elements"
+                ],
+                "summary": "Get element by name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Element name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Element"
+                        }
+                    },
+                    "404": {
+                        "description": "Element not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.CombinationRequest": {
+            "type": "object",
+            "properties": {
+                "first_element": {
+                    "type": "string"
+                },
+                "second_element": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Element": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
